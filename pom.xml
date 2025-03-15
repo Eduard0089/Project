@@ -19,16 +19,24 @@
             </plugin>
         </plugins>
     </build>
+<dependencies>
+    <dependency>
+        <groupId>org.slf4j</groupId>
+        <artifactId>slf4j-simple</artifactId>
+        <version>2.0.9</version> <!-- Проверьте актуальную версию на Maven Central -->
+    </dependency>
+        <dependency>
+            <groupId>com.zaxxer</groupId>
+            <artifactId>HikariCP</artifactId>
+            <version>5.0.1</version>
+        </dependency>
 
-    <dependencies>
-<!--         Ваши зависимости-->
-         <!-- https://mvnrepository.com/artifact/junit/junit -->
-         <dependency>
-             <groupId>junit</groupId>
-             <artifactId>junit</artifactId>
-             <version>4.13.2</version>
-             <scope>test</scope>
-         </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.13.2</version>
+            <scope>test</scope>
+        </dependency>
 
         <dependency>
             <groupId>mysql</groupId>
