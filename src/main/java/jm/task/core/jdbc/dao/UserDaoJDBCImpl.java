@@ -3,16 +3,16 @@ package jm.task.core.jdbc.dao;
 import jm.task.core.jdbc.model.User;
 import jm.task.core.jdbc.util.Util;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
 public class UserDaoJDBCImpl implements UserDao {
-    Util util = new Util();
-
-    public UserDaoJDBCImpl() {
-
-    }
+    Util util = Util.getInstance();
 
     public void createUsersTable() {
         String sql = "CREATE TABLE IF NOT EXISTS users (" +
@@ -22,7 +22,7 @@ public class UserDaoJDBCImpl implements UserDao {
                 "age TINYINT NOT NULL" +
                 ")";
         try (Connection connection = util.getConnection();
-                Statement statement = connection.createStatement()) {
+             Statement statement = connection.createStatement()) {
                 statement.execute(sql);
                 System.out.println("Таблица 'users' создана!");
 
