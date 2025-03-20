@@ -16,6 +16,7 @@ public class UserServiceTest {
 
     @Test
     public void dropUsersTable() {
+
         try {
             userService.dropUsersTable();
             userService.dropUsersTable();

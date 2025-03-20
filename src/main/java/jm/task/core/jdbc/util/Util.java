@@ -8,22 +8,26 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Properties;
 
+import jm.task.core.jdbc.model.User;
+import org.hibernate.HibernateException;
 import org.hibernate.SessionFactory;
+import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.cfg.Configuration;
+import org.hibernate.service.ServiceRegistry;
 
 
 public class Util {
+    String dbUrl;
+    String dbUsername;
+    String dbPassword;
     private final DataSource dataSource;
     public static Util instance;
+    HikariConfig config = new HikariConfig();
     private Util() {
         Properties properties = new Properties();
-        String dbUrl;
-        String dbUsername;
-        String dbPassword;
         try (FileInputStream input = new FileInputStream("src/main/resources/application.properties"))
             {
             properties.load(input);
@@ -40,7 +44,8 @@ public class Util {
         config.setUsername(dbUsername);
         config.setPassword(dbPassword);
         config.setMaximumPoolSize(10);
-        this.dataSource = new HikariDataSource(config);
+        this.config = config;
+        dataSource = new HikariDataSource(config);
     }
     public static Util getInstance() {
         if (instance == null) {
@@ -51,7 +56,26 @@ public class Util {
         public Connection getConnection() throws SQLException {
             return dataSource.getConnection();
     }
+    public static SessionFactory getSessionFactory(){
+        SessionFactory sessionFactory;
+        Util util = new Util();
+        try {
+            Configuration configuration = new Configuration();
+            configuration.setProperty("hibernate.dialect", "org.hibernate.dialect.MySQL8Dialect");
+            configuration.setProperty("hibernate.show_sql", "true");
+            configuration.setProperty("hibernate.format_sql", "true");
+            configuration.setProperty("hibernate.hbm2ddl.auto", "update");
 
-    
+            configuration.addAnnotatedClass(jm.task.core.jdbc.model.User.class);
 
+            ServiceRegistry serviceRegistry = new StandardServiceRegistryBuilder()
+                    .applySettings(configuration.getProperties())
+                    .applySetting("hibernate.connection.datasource", util.dataSource)
+                    .build();
+            sessionFactory = configuration.buildSessionFactory(serviceRegistry);
+            return sessionFactory;
+        } catch (HibernateException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }
